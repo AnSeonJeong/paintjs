@@ -17,6 +17,9 @@ ctx.lineWidth = 2.5;
 let painting = false;
 let filling = false;
 
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
 function stopPainting(event) {
     painting = false;
 }
