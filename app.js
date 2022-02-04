@@ -16,7 +16,6 @@ ctx.lineWidth = 2.5;
 
 let painting = false;
 let filling = false;
-let eraserMode = false;
 
 function stopPainting(event) {
     painting = false;
@@ -66,7 +65,8 @@ function handleCanvasClick() {
 }
 
 function handleRemoveCanvas() {
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);   
+    ctx.beginPath();
 }
 
 function handleCM(event) {
@@ -81,13 +81,43 @@ function handleSaveClick() {
     link.click();
 }
 
+function handleTouchStart(event) {
+    event.preventDefault();
+    if(filling) {
+        ctx.fillRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    } else {
+        ctx.beginPath();
+        startPainting();
+    }
+}
+
+function handleTouchMove(event) {
+    event.preventDefault();
+    const touchX =  event.changedTouches[0].pageX;
+    const touchY =  event.changedTouches[0].pageY;
+    ctx.lineTo(touchX, touchY);
+    ctx.stroke();
+}
+
+function handleTouchEnd(event) {
+    event.preventDefault();
+    ctx.closePath();
+    stopPainting();
+}
+
 if(canvas) {
+    // mouse event
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mousedown", startPainting);
     canvas.addEventListener("mouseup", stopPainting);
     canvas.addEventListener("mouseleave", stopPainting);
     canvas.addEventListener("click", handleCanvasClick)
     canvas.addEventListener("contextmenu", handleCM);
+    // touch event
+    canvas.addEventListener("touchstart", handleTouchStart, false);
+    canvas.addEventListener("touchmove", handleTouchMove, false);
+    canvas.addEventListener("touchend", handleTouchEnd, false);
+
 }
 
 colors.forEach(color => 
